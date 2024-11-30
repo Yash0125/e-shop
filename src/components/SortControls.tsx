@@ -1,55 +1,55 @@
-import React from 'react';
-import { useAppDispatch, useAppSelector } from '../redux/store';
-import { setSorting } from '../features/products/productSlice';
+import React, { useState } from 'react';
+import { useAppSelector } from '../redux/store';
+import FilterModal from './FilterModal';
+import { FaFilter } from 'react-icons/fa';
 
 const SortControls: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const { sortBy, sortOrder } = useAppSelector((state) => state.products);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const filters = useAppSelector((state) => state.products.filters);
 
-  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = event.target.value;
-    if (value === 'none') {
-      dispatch(setSorting({ sortBy: null }));
-    } else {
-      const [newSortBy, newSortOrder] = value.split('-') as ['price' | 'rating', 'asc' | 'desc'];
-      dispatch(setSorting({ sortBy: newSortBy, sortOrder: newSortOrder }));
+  const getActiveFilters = () => {
+    const activeFilters = [];
+    
+    if (filters.price.active) {
+      activeFilters.push(`Price: ${filters.price.order === 'asc' ? 'Low to High' : 'High to Low'}`);
     }
+    
+    if (filters.rating.active) {
+      activeFilters.push(`Rating: ${filters.rating.order === 'asc' ? 'Low to High' : 'High to Low'}`);
+    }
+
+    return activeFilters.length > 0 ? activeFilters.join(' • ') : 'No filters applied';
   };
 
-  const currentValue = sortBy ? `${sortBy}-${sortOrder}` : 'none';
-
   return (
-    <div className="flex items-center gap-4 p-4"
-    //  style={{ 
-    //     background: 'var(--card-bg)',
-    //     border: '1px solid var(--card-border)',
-    //     boxShadow: 'var(--shadow-1)',
-    //     color: 'var(--light-gray)'
-    //   }}
-      >
-      <label htmlFor="sort-select" className="text-gray-700 font-medium" style={{ 
-          color: 'var(--light-gray)',
-          boxShadow: 'var(--shadow-1)'
-        }}>
-        Sort by:
-      </label>
-      <select
-        id="sort-select"
-        value={currentValue}
-        onChange={handleSortChange}
-        className="p-2 border-0 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <div className="flex justify-between items-center p-4 w-full"
+      style={{ 
+        background: 'var(--bg-gradient-onyx)',
+        border: '1px solid var(--jet)',
+        boxShadow: 'var(--shadow-2)',
+        borderRadius: '12px'
+      }}>
+      <div className="flex items-center gap-2" style={{ color: 'var(--light-gray)' }}>
+        <span className="font-medium">Active Filters:</span>
+        <span className="text-sm opacity-90">{getActiveFilters()}</span>
+      </div>
+      
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 hover:opacity-90"
         style={{ 
-          background: 'var(--card-bg)',
-          color: 'var(--light-gray)',
-          boxShadow: 'var(--shadow-1)'
+          background: 'var(--orange-yellow-crayola)',
+          color: 'var(--white)'
         }}
       >
-        <option value="none" style={{ color: 'var(--light-gray)' }}>None</option>
-        <option value="price-asc" style={{ color: 'var(--light-gray)' }}>Price: Low to High</option>
-        <option value="price-desc" style={{ color: 'var(--light-gray)' }}>Price: High to Low</option>
-        <option value="rating-desc" style={{ color: 'var(--light-gray)' }}>Rating: High to Low</option>
-        <option value="rating-asc" style={{ color: 'var(--light-gray)' }}>Rating: Low to High</option>
-      </select>
+        <FaFilter />
+        Filter & Sort
+      </button>
+
+      <FilterModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

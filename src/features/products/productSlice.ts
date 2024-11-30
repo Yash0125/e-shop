@@ -1,53 +1,77 @@
 // src/features/products/productSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { Product, ProductState } from '../../types/product';
+import { Product } from '../../types/product';
 import { RootState } from '../../redux/store';
 
-// Async thunk for fetching products
+interface ProductsState {
+  items: Product[];
+  loading: boolean;
+  error: string | null;
+  currentPage: number;
+  searchQuery: string;
+  filters: {
+    price: {
+      active: boolean;
+      order: 'asc' | 'desc';
+    };
+    rating: {
+      active: boolean;
+      order: 'asc' | 'desc';
+    };
+  };
+}
+
+const initialState: ProductsState = {
+  items: [],
+  loading: false,
+  error: null,
+  currentPage: 1,
+  searchQuery: '',
+  filters: {
+    price: {
+      active: false,
+      order: 'asc'
+    },
+    rating: {
+      active: false,
+      order: 'desc'
+    }
+  }
+};
+
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get('https://fakestoreapi.com/products');
-      return response.data;
-    } catch (error) {
-      return rejectWithValue('Failed to fetch products');
-    }
+  async () => {
+    const response = await axios.get('https://fakestoreapi.com/products');
+    return response.data;
   }
 );
 
-// Initial state
-const initialState: ProductState = {
-  products: [],
-  loading: false,
-  error: null,
-  searchTerm: '',
-  sortBy: 'name',
-  sortOrder: 'asc',
-  currentPage: 1,
-  itemsPerPage: 8
-};
-
-// Product slice
 const productSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    setSearchTerm: (state, action: PayloadAction<string>) => {
-      state.searchTerm = action.payload;
-      state.currentPage = 1; // Reset to first page on search
-    },
-    setSorting: (state, action: PayloadAction<{
-      sortBy: string;
-      sortOrder: 'asc' | 'desc';
-    }>) => {
-      state.sortBy = action.payload.sortBy;
-      state.sortOrder = action.payload.sortOrder;
-      state.currentPage = 1; // Reset to first page on sort
-    },
     setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
+    },
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.searchQuery = action.payload;
+      state.currentPage = 1;
+    },
+    setFilters: (state, action: PayloadAction<{
+      price?: { active: boolean; order: 'asc' | 'desc' };
+      rating?: { active: boolean; order: 'asc' | 'desc' };
+    }>) => {
+      if (action.payload.price) {
+        state.filters.price = action.payload.price;
+      }
+      if (action.payload.rating) {
+        state.filters.rating = action.payload.rating;
+      }
+    },
+    clearFilters: (state) => {
+      state.filters = initialState.filters;
     }
   },
   extraReducers: (builder) => {
@@ -58,58 +82,54 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload;
+        state.items = action.payload;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.error.message || 'Failed to fetch products';
       });
   },
 });
 
-// Selectors
 export const selectFilteredAndSortedProducts = (state: RootState) => {
-  const { products, searchTerm, sortBy, sortOrder, currentPage, itemsPerPage } = state.products;
-  
-  // Filter products based on search term
-  let filteredProducts = products;
-  if (searchTerm) {
-    const searchLower = searchTerm.toLowerCase();
-    filteredProducts = products.filter(product =>
-      product.title.toLowerCase().includes(searchLower) ||
-      product.description.toLowerCase().includes(searchLower)
+  let filteredProducts = [...state.products.items];
+  const searchQuery = state.products.searchQuery.toLowerCase();
+  const itemsPerPage = 8;
+
+  // Apply search filter
+  if (searchQuery) {
+    filteredProducts = filteredProducts.filter(
+      product => product.title.toLowerCase().includes(searchQuery)
     );
   }
 
-  // Sort products
-  let sortedProducts = [...filteredProducts];
-  if (sortBy) {
-    sortedProducts.sort((a, b) => {
-      let aValue = a[sortBy as keyof Product];
-      let bValue = b[sortBy as keyof Product];
-      
-      // Handle rating objects
-      if (sortBy === 'rating') {
-        aValue = (aValue as any).rate;
-        bValue = (bValue as any).rate;
-      }
-      
-      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-      return 0;
+  // Apply sorting
+  if (state.products.filters.price.active) {
+    filteredProducts.sort((a, b) => {
+      return state.products.filters.price.order === 'asc' 
+        ? a.price - b.price 
+        : b.price - a.price;
+    });
+  }
+
+  if (state.products.filters.rating.active) {
+    filteredProducts.sort((a, b) => {
+      return state.products.filters.rating.order === 'asc'
+        ? a.rating.rate - b.rating.rate
+        : b.rating.rate - a.rating.rate;
     });
   }
 
   // Calculate pagination
-  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = sortedProducts.slice(startIndex, startIndex + itemsPerPage);
+  const startIndex = (state.products.currentPage - 1) * itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   return {
     products: paginatedProducts,
-    totalPages
+    totalPages,
   };
 };
 
-export const { setSearchTerm, setSorting, setCurrentPage } = productSlice.actions;
+export const { setCurrentPage, setSearchQuery, setFilters, clearFilters } = productSlice.actions;
 export default productSlice.reducer;
