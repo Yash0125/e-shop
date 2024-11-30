@@ -2,6 +2,8 @@
 
 A modern e-commerce application built with React, TypeScript, and Vite. Features include product listing, cart management, search functionality, and advanced filtering options.
 
+🚀 **[Live Demo](https://e-shop-e-commerce-app.vercel.app/)**
+
 ## Features
 
 - 🛍️ Product listing with dynamic filtering
