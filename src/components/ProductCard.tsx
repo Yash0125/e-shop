@@ -2,6 +2,7 @@ import React from 'react';
 import { Product } from '../types/product';
 import { useAppDispatch } from '../redux/store';
 import { addToCart } from '../features/cart/cartSlice';
+import { toast } from 'react-toastify';
 
 interface ProductCardProps {
   product: Product;
@@ -12,6 +13,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const handleAddToCart = () => {
     dispatch(addToCart(product));
+    toast.success(`${product.title.slice(0, 20)}... added to cart!`, {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   return (
@@ -47,7 +57,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <span>({product.rating.count} reviews)</span>
       </div>
       <button
-        onClick={() => handleAddToCart(product)}
+        onClick={handleAddToCart}
         className="w-full py-2 px-4 rounded-lg font-semibold transition-all duration-200 hover:opacity-90"
         style={{ 
           background: 'var(--button-bg)',

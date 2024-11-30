@@ -5,6 +5,8 @@ import { store } from './redux/store';
 import Header from './components/Header';
 import ProductListing from './components/ProductListing';
 import Cart from './pages/Cart';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App: React.FC = () => {
   return (
@@ -16,6 +18,18 @@ const App: React.FC = () => {
             <Route path="/" element={<ProductListing />} />
             <Route path="/cart" element={<Cart />} />
           </Routes>
+          <ToastContainer
+            position="bottom-right"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+          />
         </div>
       </Router>
     </Provider>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { removeFromCart, updateQuantity } from '../features/cart/cartSlice';
+import { toast } from 'react-toastify';
 
 const Cart: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -12,7 +13,19 @@ const Cart: React.FC = () => {
   };
 
   const handleRemove = (id: number) => {
+    const item = items.find(item => item.id === id);
     dispatch(removeFromCart(id));
+    if (item) {
+      toast.error(`${item.title.slice(0, 20)}... removed from cart!`, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
 
   return (
