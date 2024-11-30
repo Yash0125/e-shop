@@ -1,50 +1,137 @@
-# React + TypeScript + Vite
+# E-Shop App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern e-commerce application built with React, TypeScript, and Vite. Features include product listing, cart management, search functionality, and advanced filtering options.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🛍️ Product listing with dynamic filtering
+- 🔍 Real-time search functionality
+- 🛒 Shopping cart management
+- ⭐ Rating-based filtering
+- 💰 Price-based sorting
+- 🌓 Dark theme
+- 📱 Responsive design
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Before you begin, ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (version 16 or higher)
+- npm (comes with Node.js)
 
-- Configure the top-level `parserOptions` property like this:
+## Getting Started
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Cloning and Running the App
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/e-shop-app.git
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+2. Navigate to the project directory:
+```bash
+cd e-shop-app
 ```
+
+3. Install dependencies:
+```bash
+npm install
+```
+
+4. Start the development server:
+```bash
+npm run dev
+```
+
+5. Open your browser and visit:
+```
+http://localhost:5173
+```
+
+### Building for Production
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+The built files will be in the `dist` directory.
+
+To preview the production build:
+
+```bash
+npm run preview
+```
+
+## Project Structure
+
+```
+e-shop-app/
+├── src/
+│   ├── components/     # Reusable components
+│   ├── features/       # Feature-specific components and logic
+│   ├── pages/          # Page components
+│   ├── redux/          # Redux store configuration
+│   ├── types/          # TypeScript type definitions
+│   └── utils/          # Utility functions
+├── public/            # Static assets
+└── package.json       # Project dependencies and scripts
+```
+
+## Technologies Used
+
+- React 18
+- TypeScript
+- Redux Toolkit
+- Vite
+- Tailwind CSS
+- React Router DOM
+- React Icons
+- React Toastify
+- Axios
+
+## Development
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Create production build
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run test` - Run tests
+
+### Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+VITE_API_URL=your_api_url_here
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Port Already in Use**
+   - The development server will automatically try the next available port
+   - Default port is 5173
+
+2. **Node Modules Issues**
+   - Delete the `node_modules` folder and `package-lock.json`
+   - Run `npm install` again
+
+3. **Build Errors**
+   - Clear the `dist` folder
+   - Run `npm run build` again
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
