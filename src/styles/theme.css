@@ -1,0 +1,46 @@
+:root {
+  /* Light theme colors */
+  --bg-color: hsl(0, 0%, 100%);
+  --text-color: hsl(0, 0%, 22%);
+  --card-bg: hsl(0, 0%, 98%);
+  --border-color: hsl(0, 0%, 84%);
+  --primary-color: hsl(45, 100%, 72%);
+  --primary-hover: hsl(45, 54%, 58%);
+  --shadow: 0 16px 30px hsla(0, 0%, 0%, 0.1);
+}
+
+[data-theme="dark"] {
+  --bg-color: hsl(240, 2%, 13%);
+  --text-color: hsl(0, 0%, 98%);
+  --card-bg: hsl(240, 1%, 17%);
+  --border-color: hsl(0, 0%, 25%);
+  --primary-color: hsl(45, 100%, 72%);
+  --primary-hover: hsl(45, 54%, 58%);
+  --shadow: 0 16px 30px hsla(0, 0%, 0%, 0.25);
+  
+  background: var(--bg-gradient-onyx);
+  color: var(--text-color);
+}
+
+/* Gradients */
+.bg-gradient-onyx {
+  background: linear-gradient(
+    to bottom right,
+    hsl(240, 1%, 25%) 3%,
+    hsl(0, 0%, 19%) 97%
+  );
+}
+
+.bg-gradient-jet {
+  background: linear-gradient(
+      to bottom right,
+      hsla(240, 1%, 18%, 0.251) 0%,
+      hsla(240, 2%, 11%, 0) 100%
+    ),
+    hsl(240, 2%, 13%);
+}
+
+/* Transitions */
+.theme-transition {
+  transition: all 0.25s ease;
+}
